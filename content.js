@@ -33,6 +33,30 @@ const description = $("#pdp-description:first-child").text()
 const details = $("[class=js-product-details_val]").text()
 const price = $("meta[itemprop='price']").attr("content")
 const color = $("div").find(".selected-color").text()
+const discount = $(".discount_percentage").text()
+const striked = $(".strike-through").find(".value").text()
+
+let original_price
+if(striked.length > 0){
+  const onlynum = striked.replace(/[^0-9.-]+/g,"");
+  original_price = parseFloat(onlynum)
+}else{
+  original_price = price
+}
+
+const img = $("img[itemprop='image']").first()
+const attr = img.attr('data-src')
+let imglocation
+if (typeof attr !== 'undefined' && attr !== false) {
+  imglocation = img.attr('src')
+}else{
+  imglocation = img.attr('data-src')
+}
+
+const img_name = imglocation.match(/[\d, \w,-]+\.jpg/).toString()
+const season = img_name.slice(0,7)
+const color_code = img_name.match(/([\d|A-Z]{2})-\d\.jpg/)[1]
+const size = $("div").find(".selected-size").text()
 
 let sku
 if($("meta[itemprop='productID']").length > 0){
@@ -75,11 +99,15 @@ chrome.runtime.sendMessage({
   sku: sku,
   prodname: prodname,
   price: price,
+  original_price: original_price,
+  discount: discount,
   description: description,
   details: arr_details,
   width: width,
   height: height,
   depth: depth,
   handle_drop: handle_drop,
-  color: color
+  season: season,
+  color_code: color_code,
+  size: size
 })

@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const bg = chrome.extension.getBackgroundPage()
 
+  const tbl = document.createElement("table")
+  Object.keys(bg.iteminfo).forEach(function (key){
+    const row = document.createElement("tr")
+    const th = document.createElement("th")
+    const td = document.createElement("td")
+    let cellText = document.createTextNode(`${key}: `)
+    th.appendChild(cellText)
+    cellText = document.createTextNode(bg.iteminfo[key])
+    td.appendChild(cellText)
+    row.appendChild(th)
+    row.appendChild(td)
+    tbl.appendChild(row)
+  })
+  document.body.appendChild(tbl)
+
   const sku = bg.iteminfo['sku']
   myregex = /\w+\d-\d+/
   if(myregex.test(sku)){
@@ -34,13 +49,6 @@ document.addEventListener('DOMContentLoaded', function(){
     document.body.appendChild(a)
   }
 
-  Object.keys(bg.iteminfo).forEach(function (key){
-    const div = document.createElement('div')
-    div.textContent = `${key}: `
-    document.body.appendChild(div)
-    createElmBtn(bg.iteminfo[key])
-  })
-
   let txtDetails = ''
   txtDetails= `幅: ${bg.iteminfo['width']}cm\n`
   txtDetails += `高さ: ${bg.iteminfo['height']}cm\n`
@@ -48,37 +56,34 @@ document.addEventListener('DOMContentLoaded', function(){
   txtDetails += `ハンドルドロップ: ${bg.iteminfo['handle_drop']}cm\r\n`
   createElmBtn(txtDetails)
 
-  document.getElementById("show_color").addEventListener("click", function() {
-    const url = bg.iteminfo['url']
-    let cur_col = ''
-    myregex = /_([A-Z]+)\.html/
-    if(myregex.test(url)){
-      cur_col = url.match(myregex)[1]
-    }
-
-    colors.forEach(color => {
-      const a = document.createElement('a')
-      const a_text = document.createTextNode(color)
-      new_url = url.replace(cur_col, color)
-
-      a.setAttribute('href', new_url)
-      a.setAttribute('target', '_blank')
-      a.appendChild(a_text);
-      document.body.appendChild(a)
-    })
-
-  })
+  // document.getElementById("show_color").addEventListener("click", function() {
+  //   const url = bg.iteminfo['url']
+  //   let cur_col = ''
+  //   myregex = /_([A-Z]+)\.html/
+  //   if(myregex.test(url)){
+  //     cur_col = url.match(myregex)[1]
+  //   }
+  //
+  //   colors.forEach(color => {
+  //     const a = document.createElement('a')
+  //     const a_text = document.createTextNode(color)
+  //     new_url = url.replace(cur_col, color)
+  //
+  //     a.setAttribute('href', new_url)
+  //     a.setAttribute('target', '_blank')
+  //     a.appendChild(a_text);
+  //     document.body.appendChild(a)
+  //   })
+  // })
 
 },false)
 
 function createElmBtn(text){
   const parent = document.createElement('div')
-  const div = document.createElement('div')
-  div.textContent = text
-  parent.appendChild(div)
+  parent.textContent = text
   const btn = document.createElement("BUTTON")
   const btn_name = text.toString().slice(0,5)
-  btn.innerHTML = btn_name
+  btn.innerHTML = 'copy'
   parent.appendChild(btn)
   btn.onclick = function(){
     saveToClipboard(text)
@@ -97,8 +102,8 @@ function saveToClipboard(text) {
     copyFrom.remove()
 }
 
-document.getElementById("add_color").addEventListener("click", function() {
-  const color = document.getElementById("color").value
-  colors.push(color)
-  document.getElementById("arr_colors").innerHTML = colors;
-})
+// document.getElementById("add_color").addEventListener("click", function() {
+//   const color = document.getElementById("color").value
+//   colors.push(color)
+//   document.getElementById("arr_colors").innerHTML = colors;
+// })
